@@ -16,7 +16,6 @@ use RuntimeException;
 
 use function array_diff;
 use function array_keys;
-use function assert;
 use function count;
 use function implode;
 use function reset;
@@ -39,13 +38,23 @@ use function sprintf;
  */
 class CountOutputWalker extends SqlWalker
 {
-    private readonly AbstractPlatform $platform;
-    private readonly ResultSetMapping $rsm;
+    /** @var AbstractPlatform */
+    private $platform;
+
+    /** @var ResultSetMapping */
+    private $rsm;
 
     /**
-     * {@inheritDoc}
+     * Stores various parameters that are otherwise unavailable
+     * because Doctrine\ORM\Query\SqlWalker keeps everything private without
+     * accessors.
+     *
+     * @param Query        $query
+     * @param ParserResult $parserResult
+     * @param mixed[]      $queryComponents
+     * @psalm-param array<string, QueryComponent> $queryComponents
      */
-    public function __construct(Query $query, ParserResult $parserResult, array $queryComponents)
+    public function __construct($query, $parserResult, array $queryComponents)
     {
         $this->platform = $query->getEntityManager()->getConnection()->getDatabasePlatform();
         $this->rsm      = $parserResult->getResultSetMapping();
@@ -53,18 +62,21 @@ class CountOutputWalker extends SqlWalker
         parent::__construct($query, $parserResult, $queryComponents);
     }
 
-    public function walkSelectStatement(SelectStatement $selectStatement): string
+    /**
+     * {@inheritDoc}
+     */
+    public function walkSelectStatement(SelectStatement $AST)
     {
         if ($this->platform instanceof SQLServerPlatform) {
-            $selectStatement->orderByClause = null;
+            $AST->orderByClause = null;
         }
 
-        $sql = parent::walkSelectStatement($selectStatement);
+        $sql = parent::walkSelectStatement($AST);
 
-        if ($selectStatement->groupByClause) {
+        if ($AST->groupByClause) {
             return sprintf(
                 'SELECT COUNT(*) AS dctrn_count FROM (%s) dctrn_table',
-                $sql,
+                $sql
             );
         }
 
@@ -74,7 +86,7 @@ class CountOutputWalker extends SqlWalker
         // so for now, It's not supported.
 
         // Get the root entity and alias from the AST fromClause
-        $from = $selectStatement->fromClause->identificationVariableDeclarations;
+        $from = $AST->fromClause->identificationVariableDeclarations;
         if (count($from) > 1) {
             throw new RuntimeException('Cannot count query which selects two FROM components, cannot make distinction');
         }
@@ -96,9 +108,7 @@ class CountOutputWalker extends SqlWalker
             }
 
             if (isset($rootClass->associationMappings[$property])) {
-                $association = $rootClass->associationMappings[$property];
-                assert($association->isToOneOwningSide());
-                $joinColumn = $association->joinColumns[0]->name;
+                $joinColumn = $rootClass->associationMappings[$property]['joinColumns'][0]['name'];
 
                 foreach (array_keys($this->rsm->metaMappings, $joinColumn, true) as $alias) {
                     if ($this->rsm->columnOwnerMap[$alias] === $rootAlias) {
@@ -111,7 +121,7 @@ class CountOutputWalker extends SqlWalker
         if (count($rootIdentifier) !== count($sqlIdentifier)) {
             throw new RuntimeException(sprintf(
                 'Not all identifier properties can be found in the ResultSetMapping: %s',
-                implode(', ', array_diff($rootIdentifier, array_keys($sqlIdentifier))),
+                implode(', ', array_diff($rootIdentifier, array_keys($sqlIdentifier)))
             ));
         }
 
@@ -119,7 +129,7 @@ class CountOutputWalker extends SqlWalker
         return sprintf(
             'SELECT COUNT(*) AS dctrn_count FROM (SELECT DISTINCT %s FROM (%s) dctrn_result) dctrn_table',
             implode(', ', $sqlIdentifier),
-            $sql,
+            $sql
         );
     }
 }

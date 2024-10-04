@@ -1,42 +1,33 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Doctrine\DBAL\Driver\PDO\OCI;
 
 use Doctrine\DBAL\Driver\AbstractOracleDriver;
 use Doctrine\DBAL\Driver\PDO\Connection;
 use Doctrine\DBAL\Driver\PDO\Exception;
-use Doctrine\DBAL\Driver\PDO\Exception\InvalidConfiguration;
 use PDO;
 use PDOException;
 use SensitiveParameter;
-
-use function is_string;
 
 final class Driver extends AbstractOracleDriver
 {
     /**
      * {@inheritDoc}
+     *
+     * @return Connection
      */
     public function connect(
         #[SensitiveParameter]
-        array $params,
-    ): Connection {
+        array $params
+    ) {
         $driverOptions = $params['driverOptions'] ?? [];
 
         if (! empty($params['persistent'])) {
             $driverOptions[PDO::ATTR_PERSISTENT] = true;
         }
 
-        foreach (['user', 'password'] as $key) {
-            if (isset($params[$key]) && ! is_string($params[$key])) {
-                throw InvalidConfiguration::notAStringOrNull($key, $params[$key]);
-            }
-        }
-
         $safeParams = $params;
-        unset($safeParams['password']);
+        unset($safeParams['password'], $safeParams['url']);
 
         try {
             $pdo = new PDO(

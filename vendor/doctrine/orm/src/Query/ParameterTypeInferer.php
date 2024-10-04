@@ -8,7 +8,7 @@ use BackedEnum;
 use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
-use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Types\Types;
 
@@ -22,14 +22,18 @@ use function is_int;
  *
  * @link    www.doctrine-project.org
  */
-final class ParameterTypeInferer
+class ParameterTypeInferer
 {
     /**
      * Infers type of a given value, returning a compatible constant:
      * - Type (\Doctrine\DBAL\Types\Type::*)
      * - Connection (\Doctrine\DBAL\Connection::PARAM_*)
+     *
+     * @param mixed $value Parameter value.
+     *
+     * @return int|string Parameter type constant.
      */
-    public static function inferType(mixed $value): ParameterType|ArrayParameterType|int|string
+    public static function inferType($value)
     {
         if (is_int($value)) {
             return Types::INTEGER;
@@ -64,14 +68,10 @@ final class ParameterTypeInferer
             }
 
             return is_int($firstValue)
-                ? ArrayParameterType::INTEGER
-                : ArrayParameterType::STRING;
+                ? Connection::PARAM_INT_ARRAY
+                : Connection::PARAM_STR_ARRAY;
         }
 
         return ParameterType::STRING;
-    }
-
-    private function __construct()
-    {
     }
 }
