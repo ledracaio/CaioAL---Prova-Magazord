@@ -4,14 +4,9 @@ use Doctrine\ORM\Tools\Console\ConsoleRunner;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 
-// Inclua o arquivo de bootstrap ou configuração
-require_once __DIR__ . '/config.php'; // Altere para o caminho correto do seu arquivo de configuração
+require_once __DIR__ . '/vendor/autoload.php';
 
-// Configure o EntityManager
-$paths = [__DIR__ . '/src/Entity']; // Caminho para as suas entidades
-$isDevMode = true; // Defina como true se estiver em modo de desenvolvimento
-
-// Configuração do banco de dados para PostgreSQL
+// Configuração do banco de dados
 $dbParams = [
     'driver'   => 'pdo_pgsql',
     'user'     => 'postgres',
@@ -20,9 +15,8 @@ $dbParams = [
     'host'     => 'localhost',
 ];
 
-// Crie o EntityManager
-$config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode);
+// Configuração do EntityManager
+$config = Setup::createAnnotationMetadataConfiguration([__DIR__ . '/src'], true);
 $entityManager = EntityManager::create($dbParams, $config);
 
-// Crie o HelperSet para o Console
 return ConsoleRunner::createHelperSet($entityManager);

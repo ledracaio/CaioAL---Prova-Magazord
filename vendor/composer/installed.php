@@ -3,7 +3,7 @@
         'name' => 'caiop/prova-magazord',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'c357888edf8bb2df63ca54cdba1fdf31c51ac5f8',
+        'reference' => '9331ed0a39786c74700b0a7f77132603d0a3785e',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'caiop/prova-magazord' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'c357888edf8bb2df63ca54cdba1fdf31c51ac5f8',
+            'reference' => '9331ed0a39786c74700b0a7f77132603d0a3785e',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
