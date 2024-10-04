@@ -5,7 +5,8 @@
     "require": {
         "monolog/monolog": "^3.7",
         "doctrine/orm": "^2.0",
-        "doctrine/annotations": "^1.0"
+        "doctrine/annotations": "^1.0",
+        "doctrine/dbal": "^3.9"
     },
     "minimum-stability": "stable",
     "autoload": {
