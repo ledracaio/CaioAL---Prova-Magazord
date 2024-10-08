@@ -3,7 +3,7 @@
 Passo a passo testado com um servidor local (localhost), pode vir a ocorrer problemas caso testado em qualquer coisa diferente.
 
 1. Clone o repositório em uma pasta:
-   git clone [text](https://github.com/ledracaio/CaioAugustoLedra-Prova-Magazord.git)
+   git clone [https://github.com/ledracaio/CaioAugustoLedra-Prova-Magazord.git](https://github.com/ledracaio/CaioAugustoLedra-Prova-Magazord.git)
 
 2. Configure o banco de dados em config/config.php e execute o script 'create_sql.sql' no pgAdmin
 
