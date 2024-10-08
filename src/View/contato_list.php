@@ -6,15 +6,16 @@
 </head>
 <body>
     <h1>Lista de Contatos</h1>
-    <a href="/public/contato_form.php?pessoa_id=<?= $pessoa->getId() ?>">Adicionar Contato</a>
+    <a href="contato_form.php?pessoa_id=<?= $pessoa->getId() ?>">Adicionar Contato</a>
     <ul>
         <?php foreach ($contatos as $contato): ?>
             <li>
                 <?= $contato->getTipo() ?>: <?= $contato->getDescricao() ?>
-                <a href="/public/contato_delete.php?id=<?= $contato->getId() ?>">Excluir</a>
+                <a href="public\..\..\public\contato_form.php?pessoa_id=<?= $pessoa->getId() ?>&id=<?= $contato->getId() ?>">Editar</a>
+                <a href="public\..\..\public\contato_delete.php?id=<?= $contato->getId() ?>">Excluir</a>
             </li>
         <?php endforeach; ?>
     </ul>
-    <a href="/public/pessoa_list.php">Voltar</a>
+    <a href="index.php">Voltar</a>
 </body>
 </html>

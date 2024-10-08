@@ -21,17 +21,40 @@ class ContatoController {
     }
 
     public function save($data) {
-        $contato = new Contato();
+        // Verifica se o ID do contato foi fornecido
+        if (isset($data['id']) && $data['id']) {
+            // Atualiza um contato existente
+            $contato = $this->entityManager->find(Contato::class, $data['id']);
+            if (!$contato) {
+                // Tratar caso onde o contato não é encontrado (opcional)
+                throw new \Exception("Contato não encontrado");
+            }
+        } else {
+            // Cria um novo contato
+            $contato = new Contato();
+        }
+        
+        // Define os dados do contato
         $contato->setTipo($data['tipo']);
         $contato->setDescricao($data['descricao']);
-        
+    
+        // Busca a pessoa associada
         $pessoa = $this->entityManager->find(Pessoa::class, $data['pessoa_id']);
-        $contato->setPessoa($pessoa);
-
+        if ($pessoa) {
+            $contato->setPessoa($pessoa);
+        } else {
+            // Tratar caso onde a pessoa não é encontrada (opcional)
+            throw new \Exception("Pessoa não encontrada");
+        }
+    
+        // Persiste o contato
         $this->entityManager->persist($contato);
         $this->entityManager->flush();
-        header('Location: /public/contato_list.php?pessoa_id=' . $data['pessoa_id']);
+    
+        // Redireciona após salvar
+        header('Location: public\..\index_contato.php?pessoa_id=' . $data['pessoa_id']);
     }
+    
 
     public function delete($id) {
         $contato = $this->entityManager->find(Contato::class, $id);
@@ -39,7 +62,7 @@ class ContatoController {
             $this->entityManager->remove($contato);
             $this->entityManager->flush();
         }
-        header('Location: /public/contato_list.php?pessoa_id=' . $contato->getPessoa()->getId());
+        header('Location: public\..\index_contato.php?pessoa_id=' . $contato->getPessoa()->getId());
     }
 
     public function index($pessoaId) {

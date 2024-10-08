@@ -25,13 +25,24 @@ class PessoaController {
     }
 
     public function save($data) {
-        $pessoa = new Pessoa();
+        if (isset($data['id']) && $data['id']) {
+            $pessoa = $this->entityManager->find(Pessoa::class, $data['id']);
+            if (!$pessoa) {
+                throw new \Exception("Pessoa não encontrada");
+            }
+        } else {
+            $pessoa = new Pessoa();
+        }
+        
         $pessoa->setNome($data['nome']);
         $pessoa->setCpf($data['cpf']);
+        
         $this->entityManager->persist($pessoa);
         $this->entityManager->flush();
-        header('Location: /public/pessoa_list.php');
+    
+        header('Location: public\..\index.php');
     }
+    
 
     public function delete($id) {
         $pessoa = $this->entityManager->find(Pessoa::class, $id);
@@ -39,6 +50,6 @@ class PessoaController {
             $this->entityManager->remove($pessoa);
             $this->entityManager->flush();
         }
-        header('Location: /public/pessoa_list.php');
+        header('Location: public\..\index.php');
     }
 }
