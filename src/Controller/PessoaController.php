@@ -11,10 +11,21 @@ class PessoaController {
         $this->entityManager = $entityManager;
     }
 
-    public function index() {
-        $pessoas = $this->entityManager->getRepository(Pessoa::class)->findAll();
+    public function index($search = null) {
+        if ($search) {
+            $pessoas = $this->entityManager->getRepository(Pessoa::class)
+                        ->createQueryBuilder('p')
+                        ->where('LOWER(p.nome) LIKE :search')
+                        ->setParameter('search', '%' . strtolower($search) . '%')
+                        ->getQuery()
+                        ->getResult();
+        } else {
+            $pessoas = $this->entityManager->getRepository(Pessoa::class)->findAll();
+        }
+        
         include __DIR__ . '/../View/pessoa_list.php';
     }
+    
 
     public function form($id = null) {
         $pessoa = null;

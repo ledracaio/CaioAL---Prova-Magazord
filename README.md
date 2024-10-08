@@ -18,6 +18,10 @@ Passo a passo testado com um servidor local (localhost), pode vir a ocorrer prob
 
 
 # Informações persistentes
-Para alterar algum registro, deve-se clicar em cima da informação que deseja alterar e clicar no botão que deve surgir. Só é possivel alterar uma linha de cada vez.
+- Para alterar algum registro, deve-se clicar em cima da informação que deseja alterar e clicar no botão que deve surgir. Só é possivel alterar uma linha de cada vez.
 
-Excluir uma pessoa exclui os contatos relacionados a mesma.
+- Excluir uma pessoa exclui os contatos relacionados a mesma.
+
+- A pesquisa ocorre de forma automática ao digitar um nome.
+
+Foi utilizado de alguns templates gratuitos para a estilização do site.
