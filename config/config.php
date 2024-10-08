@@ -7,7 +7,6 @@ use Doctrine\ORM\Tools\Setup;
 
 require_once __DIR__ . '/config.php';
 
-// Configure o EntityManager
 $paths = [__DIR__ . '/src/Entity'];
 $isDevMode = true;
 
@@ -20,9 +19,7 @@ $dbParams = [
     'host'     => 'localhost',
 ];
 
-// Cria a configuração do Doctrine sem o SimpleAnnotationReader
 $config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode, null, null, false);
 $entityManager = EntityManager::create($dbParams, $config);
 
-// Retorna o HelperSet do ConsoleRunner
 return ConsoleRunner::createHelperSet($entityManager);
